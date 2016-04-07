@@ -11,7 +11,7 @@ After a few attempts I found it in this [RTE page](http://www.rte.ie/news/electi
 
 ![Image of Yaktocat](https://github.com/fabiolelis/project-template/blob/master/images/rte_website.png)
 
-How writing this information one by one would be extremely inneficient and pointless, I inspected the page looking for a document that could be read by a machine and found the link that pointed to all the information in JSON. For example, RTE has everything about the constituency of Carlow-Kilkenny  available in http://www.rte.ie/electionresults/2016/general/json/fullconstituency_c01.json.
+How writing this information one by one would be pretty inneficient, I inspected the page looking for a document that could be read by a machine and found the link that pointed to all the information in JSON. For example, RTE has everything about the constituency of Carlow-Kilkenny  available in http://www.rte.ie/electionresults/2016/general/json/fullconstituency_c01.json.
 
 Once I had this I wrote an algorithm to generate the scripts to create the database. Then, I put this on this html file ([Populate](https://github.com/fabiolelis/project-template/blob/master/supports/populate.html)) and used this to get the scripts and store them at the [supports](https://github.com/fabiolelis/project-template/tree/master/supports) folder.
 
@@ -60,14 +60,21 @@ Finally, I got my Graphy Database representing the elections:
 Summarise your three queries here.
 Then explain them one by one in the following sections.
 
-#### Query one title
-This query retreives the Bacon number of an actor...
+#### General score
+The parties who got a seat, ranked by number votes and seats, with percentages.
+And how many votes they need to get one seat.
 ```cypher
-MATCH
-	(Bacon)
-RETURN
-	Bacon;
+
+match (cand:CANDIDATE)-[:BELONGS_TO]->(p:PARTY) where p.seats > 0
+with sum(cand.votes) as totalVotes, sum(p.seats) as totalSeats
+match (cand:CANDIDATE)-[:BELONGS_TO]->(p:PARTY) where p.seats > 0
+return p.name, sum(cand.votes), sum(p.seats), 100*sum(cand.votes)/totalVotes, 100*sum(cand.seats)/totalSeats, sum(cand.votes)/sum(p.seats)
+order by sum(cand.votes) desc
 ```
+Output:
+
+![Image of Yaktocat](https://github.com/fabiolelis/project-template/blob/master/images/query1.png)
+
 
 #### Query two title
 This query retreives the Bacon number of an actor...
