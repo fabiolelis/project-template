@@ -9,7 +9,7 @@ The database represents the 2016 General Elections, containing information about
 The first thing necessary to this project was a reliable source to provide all the information about the 2016 Elections.
 After a few attempts I found it in this [RTE page](http://www.rte.ie/news/election-2016/), with a large amount of well-organised data about the Elections, separated by constituencies:
 
-![Image of Yaktocat](https://github.com/fabiolelis/project-template/blob/master/images/rte_website.png)
+![RTE page](https://github.com/fabiolelis/project-template/blob/master/images/rte_website.png)
 
 How writing this information one by one would be pretty inneficient, I inspected the page looking for a document that could be read by a machine and found the link that pointed to all the information in JSON. For example, RTE has everything about the constituency of Carlow-Kilkenny  available in http://www.rte.ie/electionresults/2016/general/json/fullconstituency_c01.json.
 
@@ -47,13 +47,13 @@ A code snippet that shows how I get a script to insert the constituencies:
 ```
 
 
-![Image of Yaktocat](https://github.com/fabiolelis/project-template/blob/master/images/populate_html_ss.png)
+![Populate html](https://github.com/fabiolelis/project-template/blob/master/images/populate_html_ss.png)
 
 In case of need to create the database from those scripts, first must be run create-constituencies, create-parties and create-candidates. Then all the nodes will have been created and the four create-relations scripts can be run as well (they were divided in four because apparently Neo4j got a problem executing large scripts).
 
 Finally, I got my Graphy Database representing the elections:
 
-![Image of Yaktocat](https://github.com/fabiolelis/project-template/blob/master/images/graphy.png)
+![Graphy](https://github.com/fabiolelis/project-template/blob/master/images/graphy.png)
 
 
 
@@ -66,8 +66,8 @@ Then explain them one by one in the following sections.
 #### General score
 The parties who got a seat, ranked by number votes and seats, with percentages.
 And how many votes they need to get one seat.
-```cypher
 
+```cypher
 match (cand:CANDIDATE)-[:BELONGS_TO]->(p:PARTY) where p.seats > 0
 with sum(cand.votes) as totalVotes, sum(p.seats) as totalSeats
 match (cand:CANDIDATE)-[:BELONGS_TO]->(p:PARTY) where p.seats > 0
@@ -76,17 +76,23 @@ order by sum(cand.votes) desc
 ```
 Output:
 
-![Image of Yaktocat](https://github.com/fabiolelis/project-template/blob/master/images/query1.png)
+![Query1](https://github.com/fabiolelis/project-template/blob/master/images/query1.png)
 
 
-#### Query two title
-This query retreives the Bacon number of an actor...
+#### Tirth percenty of votes
+This query list the parties that elected someone with more than 30% of the valid poll of his Constituency
+
 ```cypher
-MATCH
-	(Bacon)
-RETURN
-	Bacon;
+match (cand:CANDIDATE)-[:RAN_FOR]->(const:CONSTITUENCY)
+match (cand)-[BELONGS_TO]->(p:PARTY)   
+where (cand.votes > (const.turnout*1000-const.spoiled)*0.3)
+
+return DISTINCT p.name
 ```
+
+Output:
+
+![Query 2](https://github.com/fabiolelis/project-template/blob/master/images/query2.png)
 
 #### Query three title
 This query retreives the Bacon number of an actor...
