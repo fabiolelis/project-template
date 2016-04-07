@@ -13,6 +13,9 @@ After a few attempts I found it in this [RTE page](http://www.rte.ie/news/electi
 
 How writing this information one by one would be pretty inneficient, I inspected the page looking for a document that could be read by a machine and found the link that pointed to all the information in JSON. For example, RTE has everything about the constituency of Carlow-Kilkenny  available in http://www.rte.ie/electionresults/2016/general/json/fullconstituency_c01.json.
 
+As writing this information one by one would be extremely inneficient and pointless, I inspected the page looking for a document that could be read by a machine and found the link that pointed to all the information in JSON. For example, RTE has everything about the constituency of Carlow-Kilkenny  available in http://www.rte.ie/electionresults/2016/general/json/fullconstituency_c01.json.
+
+
 Once I had this I wrote an algorithm to generate the scripts to create the database. Then, I put this on this html file ([Populate](https://github.com/fabiolelis/project-template/blob/master/supports/populate.html)) and used this to get the scripts and store them at the [supports](https://github.com/fabiolelis/project-template/tree/master/supports) folder.
 
 A code snippet that shows how I get a script to insert the constituencies:
