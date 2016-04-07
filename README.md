@@ -11,8 +11,6 @@ After a few attempts I found it in this [RTE page](http://www.rte.ie/news/electi
 
 ![RTE page](https://github.com/fabiolelis/project-template/blob/master/images/rte_website.png)
 
-How writing this information one by one would be pretty inneficient, I inspected the page looking for a document that could be read by a machine and found the link that pointed to all the information in JSON. For example, RTE has everything about the constituency of Carlow-Kilkenny  available in http://www.rte.ie/electionresults/2016/general/json/fullconstituency_c01.json.
-
 As writing this information one by one would be extremely inneficient and pointless, I inspected the page looking for a document that could be read by a machine and found the link that pointed to all the information in JSON. For example, RTE has everything about the constituency of Carlow-Kilkenny  available in http://www.rte.ie/electionresults/2016/general/json/fullconstituency_c01.json.
 
 
@@ -55,10 +53,6 @@ Finally, I got my Graphy Database representing the elections:
 
 ![Graphy](https://github.com/fabiolelis/project-template/blob/master/images/graphy.png)
 
-
-
-
-
 ## Queries
 Summarise your three queries here.
 Then explain them one by one in the following sections.
@@ -75,9 +69,7 @@ return p.name, sum(cand.votes), sum(p.seats), 100*sum(cand.votes)/totalVotes, 10
 order by sum(cand.votes) desc
 ```
 Output:
-
 ![Query1](https://github.com/fabiolelis/project-template/blob/master/images/query1.png)
-
 
 #### Tirth percenty of votes
 This query list the parties that elected someone with more than 30% of the valid poll of his Constituency
@@ -91,18 +83,23 @@ return DISTINCT p.name
 ```
 
 Output:
-
 ![Query 2](https://github.com/fabiolelis/project-template/blob/master/images/query2.png)
 
-#### Query three title
-This query retreives the Bacon number of an actor...
+#### Major party: not that good, though
+Candidates in one of those two largest parties (Fianna Fáil or Fine Gael) that get less than 2500 votes
+
 ```cypher
-MATCH
-	(Bacon)
-RETURN
-	Bacon;
+match (cand:CANDIDATE)-[:BELONGS_TO]->(p:PARTY)
+where cand.votes < 2500
+and (p.party_id = "P01" or p.party_id = "P03")
+return cand, p
 ```
+
+Output:
+![Query 3](https://github.com/fabiolelis/project-template/blob/master/images/query3.png)
 
 ## References
 1. [Neo4J website](http://neo4j.com/), the website of the Neo4j database.
 2. [RTE website](http://www.rte.ie/news/election-2016/), all information about 2016 Irish General Elections RTE page
+3. [Agregation](http://neo4j.com/docs/stable/query-aggregation.html)
+4. [Order by](http://neo4j.com/docs/stable/query-order.html)
