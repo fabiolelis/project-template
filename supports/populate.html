@@ -1,0 +1,203 @@
+<html>
+<header>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+
+	<script type="text/javascript">
+	
+	$(document).ready(buildElections);
+	var elections = new Array();
+
+	function buildElections(){
+		$(".btn").prop('disabled', false);
+
+
+
+		for(var i = 1; i <=40; i++){
+
+			jQuery.ajax({
+		        url: "http://www.rte.ie/electionresults/2016/general/json/fullconstituency_c"+ ("0" + i).slice(-2) +".json",
+		        success: function (data) {
+		            var election = data.ELECTION;
+					elections.push(election);
+		        },
+		        async: false
+		    });	
+		}
+
+		$("#divWait").html("click one:");
+		$(".btn").prop('disabled', false);
+
+		
+	}
+		
+	function buildConst(){
+
+		/*
+		create (constituency:CONSTITUENCY {const_id: "C99", name: "ConstNametest", electorate: 999, num_candidates: 15, num_seats: 5, turnout: 500, spoiled: 9})
+		*/
+
+
+		var text = "CREATE <br/>";
+
+		
+		//var election = elections[0], index = 0;
+		$.each(elections, function( index, election ) {
+
+			if(index > 0)
+				text += ' <br/>,';
+		  	text += ('(constituency' + index + ':CONSTITUENCY {');
+		  	text += ('const_id: "' + election.SUMMARY.CONSTITUENCY +  '", ');
+		  	text += ('name: "'+ election.SUMMARY.CONSTITUECY_SHORT_NAME +  '", ');
+		  	text += ('electorate: '+ election.SUMMARY.ELECTORATE.replace(",",".") +  ', ');
+		  	text += ('num_candidates: '+ election.SUMMARY.NOCANDIDATES +  ', ');
+		  	text += ('num_seats: '+ election.SUMMARY.NOSEATS +  ', ');
+		  	text += ('turnout: '+ election.SUMMARY.TURNOUT.replace(",",".")  +  ', ');
+		  	text += ('spoiled: '+ election.SUMMARY.SPOILED.replace(",",".")  +  ' ');
+
+
+		  	text += '})';
+
+		});
+
+
+		$("#divText").html(text);
+
+	}
+
+	function buildParties(){
+		var text = "CREATE <br/>";
+		/*
+		create (candidate:CANDIDATE {cand_id: 99, const_id: 99, party_id: "P99Test", status: "Unelected", name: "CandName", surname: "CandSur", number: 99, votes: 999, gender: "Male"})
+		*/
+
+		//var election = elections[0], index = 0;
+		$.each(elections, function( index, election ) {
+			$.each(election.PARTIES, function( inner_index, candidate ) {
+
+
+				if(index > 0 || inner_index > 0)
+					text += ' <br/>,';
+
+			  	text += ('(candidate' + index + '_' + inner_index +':CANDIDATE {');
+			  	text += ('cand_id: "' + candidate.CODE +  '", ');
+			  	text += ('const_id: "' + election.SUMMARY.CONSTITUENCY +  '", ');
+			  	text += ('name: "'+ party.PARTY_NAME +  '", ');
+			  	text += ('minemonic: "'+ party.PARTY_MNEMONIC +  '", ');
+			  	text += ('is_major: "'+ party.MAJOR_PARTY +  '", ');
+			  	text += ('seats: '+ party.SEATS[0].NUMBER_SEATS +  ' ');
+			  	
+			  	text += '})';
+			})
+			text += '<br/>';
+
+		});
+
+		$("#divText").html(text);
+		
+
+	}
+
+	function buildCandidates(){
+		var text = "CREATE <br/>";
+		/*
+		create (candidate:CANDIDATE {cand_id: 99, const_id: 99, party_id: "P99Test", status: "Unelected", name: "CandName", surname: "CandSur", number: 99, votes: 999, gender: "Male"})
+
+		*/
+
+				//var election = elections[1], index = 0;
+		$.each(elections, function( index, election ) {
+			$.each(election.CANDIDATES, function( inner_index, candidate ) {
+
+				console.log(index + "_" + inner_index);
+
+				if(index > 0 || inner_index > 0)
+					text += ' <br/>,';
+
+			  	text += ('(candidate' + index + '_' + inner_index +':CANDIDATE {');
+			  	text += ('cand_id: ' + candidate.CANDIDATE_ID +  ', ');
+			  	text += ('const_id: "' + election.SUMMARY.CONSTITUENCY +  '", ');
+			  	text += ('party_id: "' + candidate.PARTY_ID +  '", ');
+			  	text += ('status: "' + candidate.CURRENT_STATUS +  '", ');
+			  	text += ('name: "'+ candidate.FIRSTNAME +  '", ');
+			  	text += ('surname: "'+ candidate.SURNAME +  '", ');
+			  	text += ('number: "'+ candidate.NUMBER +  '", ');
+
+				if(candidate.LAST_ACTIVE_COUNT){
+				  	var votesPos = parseInt(candidate.LAST_ACTIVE_COUNT)-1;
+				  	var votes = candidate.VOTES[votesPos].NOVOTES;
+
+				  	text += ('votes: '+ parseInt(votes.replace(",","."))  +  ', ');
+			  	}
+			  	else{
+			  		text += ('votes: '+ 0 +  ', ');
+
+			  	}
+			  	text += ('gender: "'+ candidate.GENDER +  '" ');
+
+			  	
+			  	text += '})';
+			})
+			text += '<br/>';
+
+		});
+
+		$("#divText").html(text);
+
+
+	}
+
+	function buildRelations(){
+
+		var textMatch = "";
+		var textCreate = "<br/>CREATE <br/>";
+
+		/*
+		match (cand:CANDIDATE {cand_id:99})
+		match (const:CONSTITUENCY {const_id:"C99"})
+		CREATE (cand)-[ran_for:RAN_FOR]->(const)
+
+		match (cand:CANDIDATE {cand_id:99})
+		match (party:PARTY {party_id:”P99Test”, const_id:"C99"})
+		CREATE ((cand)-[belongs_to:BELONGS_TO]->(party))
+		*/
+		$.each(elections, function( index, election ) {
+			$.each(election.CANDIDATES, function( inner_index, candidate ) {
+
+				if(index > 0 || inner_index > 0)
+					textCreate += ' ,';
+
+				textMatch += 'match (cand_0_'+ index + '_' + inner_index + ':CANDIDATE {cand_id:' + candidate.CANDIDATE_ID + '}) <br/>';
+				textMatch += 'match (const_0_'+ index + '_' + inner_index + ':CONSTITUENCY {const_id:"' + election.SUMMARY.CONSTITUENCY + '"}) <br/>';
+				textCreate += '(cand_0_'+ index + '_' + inner_index + ')-[:RAN_FOR]->(const_0_'+ index + '_' + inner_index + ')</br>';
+
+				textMatch += 'match (cand_1_'+ index + '_' + inner_index + ':CANDIDATE {cand_id:' + candidate.CANDIDATE_ID + '}) <br/>';
+				textMatch += 'match (party_1_'+ index + '_' + inner_index + ':PARTY {const_id:"' + election.SUMMARY.CONSTITUENCY + '", party_id:"' + candidate.PARTY_ID + '"}) <br/>';
+				textCreate += ',(cand_1_'+ index + '_' + inner_index + ')-[:BELONGS_TO]->(party_1_'+ index + '_' + inner_index + ')<br>';
+
+
+
+			})
+		});
+
+
+		$("#divText").html(textMatch+textCreate);
+
+	}
+
+	</script>
+
+
+</header>
+<body>
+	<div id="divWait">Wait</div>
+	<input id="btnConst" class="btn" type="button" onclick="buildConst()" value="Constituencies"></input>
+	<input id="btnConst" class="btn" type="button" onclick="buildParties()" value="Parties"></input>
+	<input id="btnConst" class="btn" type="button" onclick="buildCandidates()" value="Candidates"></input>
+	<input id="btnRelations" class="btn" type="button" onclick="buildRelations()" value="Relations"></input>
+
+
+	<div id="divText">teste</div>
+
+</body>
+
+</html>

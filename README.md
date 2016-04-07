@@ -2,7 +2,8 @@
 ###### Fabio Lelis, G00330441
 
 ## Introduction
-Give a summary here of what your project is about.
+This project's objective is build a Graph Database using Neo4j and run some queries over that.
+The database represents the 2016 General Elections, containing information about the 40 constituencies in the Republic of Ireland, its candidates and parties.
 
 ## Database
 Explain how you created your database, and how information is represented in it.
@@ -40,3 +41,4 @@ RETURN
 
 ## References
 1. [Neo4J website](http://neo4j.com/), the website of the Neo4j database.
+2. [RTE website](http://www.rte.ie/news/election-2016/)), all information about 2016 Irish General Elections RTE page
