@@ -54,12 +54,11 @@ Finally, I got my Graphy Database representing the elections:
 ![Graphy](https://github.com/fabiolelis/project-template/blob/master/images/graphy.png)
 
 ## Queries
-Summarise your three queries here.
-Then explain them one by one in the following sections.
+The three following queries is a try of give some meaningful information about the Elections and the new composition of the seats.
 
 #### General score
 The parties who got a seat, ranked by number votes and seats, with percentages.
-And how many votes they need to get one seat.
+And how many votes they needed to get one seat.
 
 ```cypher
 match (cand:CANDIDATE)-[:BELONGS_TO]->(p:PARTY) where p.seats > 0
@@ -71,7 +70,7 @@ order by sum(cand.votes) desc
 Output:
 ![Query1](https://github.com/fabiolelis/project-template/blob/master/images/query1.png)
 
-#### Tirth percenty of votes
+#### Thirty percent of votes
 This query list the parties that elected someone with more than 30% of the valid poll of his Constituency
 
 ```cypher
@@ -103,3 +102,4 @@ Output:
 2. [RTE website](http://www.rte.ie/news/election-2016/), all information about 2016 Irish General Elections RTE page
 3. [Agregation](http://neo4j.com/docs/stable/query-aggregation.html)
 4. [Order by](http://neo4j.com/docs/stable/query-order.html)
+5. [With](http://stackoverflow.com/questions/18975647/neo4j-cypher-query-to-return-relationship-property-and-sum-of-all-matching-relat)
