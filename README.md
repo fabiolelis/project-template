@@ -55,7 +55,7 @@ Finally, I got my Graphy Database representing the elections:
 
 The database, briefly, has: 40 nodes representing Constituencies, 550 nodes representing Candidates, 385 nodes representing regionally Parties (by constituency), 550 relationships "ran for" and 500 relationships "belongs to" between the Candidates and their Constituency and their Parties respectively.
 
-Example of one candidate and his relationships:
+Example of one candidate and his relationships:  
 ![Candidate](https://github.com/fabiolelis/project-template/blob/master/images/cand1.png)
 ![Details](https://github.com/fabiolelis/project-template/blob/master/images/cand1detail.png)
 
